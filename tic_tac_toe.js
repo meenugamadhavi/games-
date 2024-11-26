@@ -1,5 +1,6 @@
 let player1 = "";
 let player2 = "";
+const string = "123:456:789:147:258:369:357:159:";
 
 function greetingsMessage() {
   console.log("    -----*💥Welcome to 🍄🕴🌜 🍄🅰🌜 🍄😀𝓔 Game💥*-----\n");
@@ -75,16 +76,25 @@ function isSubSetOf(string, userString, strIndex, userStrIndex, count) {
   return isSubSetOf(string, userString, strIndex, userStrIndex + 1, newCount);
 }
 
+function slice(from, string) {
+  let substring = "";
+  let index = from;
+
+  while (string[index] !== ":") {
+    substring = substring + string[index];
+    index = index + 1;
+  }
+
+  return substring;
+}
+
+
 function isPlayerWon(set) {
-  switch (3) {
-    case isSubSetOf("123", set, 0, 0, 0): return true;
-    case isSubSetOf("456", set, 0, 0, 0): return true;
-    case isSubSetOf("789", set, 0, 0, 0): return true;
-    case isSubSetOf("147", set, 0, 0, 0): return true;
-    case isSubSetOf("258", set, 0, 0, 0): return true;
-    case isSubSetOf("369", set, 0, 0, 0): return true;
-    case isSubSetOf("159", set, 0, 0, 0): return true;
-    case isSubSetOf("357", set, 0, 0, 0): return true;
+  for (let index = 0; index < 32; index = index + 4) {
+    let substring = slice(index, string);
+    if (isSubSetOf(substring, set, 0, 0, 0) === 3) {
+      return true;
+    }
   }
 
   return false;
@@ -94,7 +104,7 @@ function determineWinner(symbol, input) {
   if (symbol === "⭕️") {
     player1 += input;
   }
-
+  
   if (symbol === "❌") {
     player2 += input;
   }
