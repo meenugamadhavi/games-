@@ -49,17 +49,17 @@ function choiceBoard(index, input, box, newBox, symbol) {
   if (index === box.length) {
     return newBox;
   }
-  
+
   if (box[index] === input) {
     newBox += symbol;
     index = index + 2;
   }
   newBox += box[index];
-  
+
   return choiceBoard(index + 1, input, box, newBox, symbol);
 }
 
-function isSubstring(string, userString, strIndex, userStrIndex, count) {
+function isSubSetOf(string, userString, strIndex, userStrIndex, count) {
   if (strIndex > string.length) {
     return count;
   }
@@ -69,24 +69,22 @@ function isSubstring(string, userString, strIndex, userStrIndex, count) {
     strIndex = strIndex + 1;
   }
 
-  if (userString[userStrIndex] === string[strIndex]) {
-    count = count + 1;
-    strIndex = strIndex + 1;
-  }
+  const isCharacterMatching = userString[userStrIndex] === string[strIndex];
+  const newCount = isCharacterMatching ? count + 1 : count;
 
-  return isSubstring(string, userString, strIndex, userStrIndex + 1, count);
+  return isSubSetOf(string, userString, strIndex, userStrIndex + 1, newCount);
 }
 
-function isPlayerWon(userString) {
+function isPlayerWon(set) {
   switch (3) {
-    case isSubstring("123", userString, 0, 0, 0): return true;
-    case isSubstring("456", userString, 0, 0, 0): return true;
-    case isSubstring("789", userString, 0, 0, 0): return true;
-    case isSubstring("147", userString, 0, 0, 0): return true;
-    case isSubstring("258", userString, 0, 0, 0): return true;
-    case isSubstring("369", userString, 0, 0, 0): return true;
-    case isSubstring("159", userString, 0, 0, 0): return true;
-    case isSubstring("357", userString, 0, 0, 0): return true;
+    case isSubSetOf("123", set, 0, 0, 0): return true;
+    case isSubSetOf("456", set, 0, 0, 0): return true;
+    case isSubSetOf("789", set, 0, 0, 0): return true;
+    case isSubSetOf("147", set, 0, 0, 0): return true;
+    case isSubSetOf("258", set, 0, 0, 0): return true;
+    case isSubSetOf("369", set, 0, 0, 0): return true;
+    case isSubSetOf("159", set, 0, 0, 0): return true;
+    case isSubSetOf("357", set, 0, 0, 0): return true;
   }
 
   return false;
@@ -97,13 +95,13 @@ function determineWinner(symbol, input) {
     player1 += input;
   }
 
-  if (symbol === "❌" ) {
+  if (symbol === "❌") {
     player2 += input;
   }
 
-  switch(true) {
-    case isPlayerWon(player1) : return winMessage("firstPlayer");
-    case isPlayerWon(player2) : return winMessage("secondPlayer");
+  switch (true) {
+    case isPlayerWon(player1): return winMessage("firstPlayer");
+    case isPlayerWon(player2): return winMessage("secondPlayer");
   }
 
   return false;
@@ -115,17 +113,17 @@ function validateInput(input) {
     console.log("❌ Enter valid number");
     return readInput();
   }
-  
+
   if (+input === 0 || +input > 9) {
     console.log("❌ enter number greater than 0 and less than 10");
     return readInput();
   }
-  
-  if (isSubstring(player1 + player2, input, 0, 0, 0)) {
-    console.log("❌ " + input, "Is already entered"  );
+
+  if (isSubSetOf(player1 + player2, input, 0, 0, 0)) {
+    console.log("❌ " + input, "Is already entered");
     return readInput();
   }
-  
+
   return input;
 }
 
@@ -137,20 +135,21 @@ function readInput() {
 
 function startGame(number, board, isWinnerFound) {
   if (number === 0 && !isWinnerFound) {
-    return "🤝 The Game Is Draw"
+    return "🤝 The Game Is Draw";
   }
 
   if (isWinnerFound) {
     return ""
   }
-  
+
   const playerInput = readInput();
   const symbol = getSymbol(number);
-  board = choiceBoard(0, playerInput, board, "", symbol);
-  displayBoard(board);
+  const newBoard = choiceBoard(0, playerInput, board, "", symbol);
+  console.clear();
+  displayBoard(newBoard);
   isWinnerFound = determineWinner(symbol, playerInput);
-  
-  return startGame(number - 1, board, isWinnerFound);
+
+  return startGame(number - 1, newBoard, isWinnerFound);
 }
 
 function ticTacToe() {
